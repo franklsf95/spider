@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import csv
 import json
 import logging
 import pprint
@@ -7,7 +8,7 @@ import re
 import requests
 from sys import stderr
 
-# logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 
 def searchGoogle(query, domain):
@@ -44,14 +45,40 @@ def findResult(json, domain):
     return None
 
 
+def readPeople(file_path, limit=5):
+    """
+    Read the names and education of people from the given CSV file.
+    :param file_path: string
+    :param limit: int
+    :rtype: a list of strings as search keywords.
+    """
+    ret = []
+    with open(file_path) as file:
+        reader = csv.reader(file)
+        _ = next(reader)  # Skip the headers
+        cnt = 0
+        for row in reader:
+            info = row[1:4]  # name, location, title
+            keyword = '  '.join(info)
+            ret.append(keyword)
+
+            cnt += 1
+            if cnt >= limit:
+                break
+    return ret
+
+
 def main():
     """
     Driver method.
 
     :rtype: NoneType
     """
+    people = readPeople('data/people.csv')
+    pprint.pprint(people)
+
+
     domain = 'linkedin.com'
-    people = ['Frank Luan', 'Mutian Liu', 'Wenxuan Liu', 'Zhen Lin']
     for q in people:
         json = searchGoogle(q, domain)
         url = findResult(json, domain)
