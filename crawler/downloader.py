@@ -58,12 +58,11 @@ def main():
     """
     Driver method.
     """
-    results = []
     file_path = '../data/results.py'
     with open(file_path) as file:
         content = file.read()
-        results = ast.literal_eval(content)
-    download_all(results)
+        people = ast.literal_eval(content)
+    download_all(people)
 
 
 if __name__ == '__main__':

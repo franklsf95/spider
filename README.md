@@ -6,6 +6,7 @@
    3. `cleaner`
 2. Parser
 3. Analyzer
+4. The database layer `db`
 
 ## Objective
 

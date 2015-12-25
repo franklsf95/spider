@@ -3,22 +3,21 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from db.base import Base
-from db.models import Person
+from db.models import Person, Position
+
+DATABASE_PATH = '../data/db.sqlite3'
 
 Session = sessionmaker()
 
 
-def main():
-    engine = create_engine('sqlite:///../data/test.db', echo=True)
+def prepare_db_session():
+    """
+    Prepares the database.
+    :return: SQLAlchemy session
+    """
+    engine = create_engine("sqlite:///{}".format(DATABASE_PATH), echo=True)
     Base.metadata.bind = engine
     Base.metadata.create_all()
     Session.configure(bind=engine)
     session = Session()
-
-    p = Person(name='Frank')
-    session.add(p)
-    session.commit()
-
-
-if __name__ == '__main__':
-    main()
+    return session
