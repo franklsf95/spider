@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import ast
 import logging
 import os
@@ -11,6 +13,7 @@ log = logging.getLogger(__name__)
 USER_AGENT = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/'
               '537.36 (KHTML, like Gecko) Chrome/49.0.2593.0 Safari/537.36'
               )
+
 
 def download(url, file_path, overwrite=False):
     """
@@ -39,7 +42,7 @@ def download_all(results):
     :param results: list of triplets
     :return: None
     """
-    root_path = './profiles/'
+    root_path = '../data/profiles/'
     if not os.path.exists(root_path):
         os.makedirs(root_path)
 

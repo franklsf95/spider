@@ -154,7 +154,7 @@ def main():
     """
     Driver method.
     """
-    people = read_people('data/people.csv', limit=10)
+    people = read_people('../data/people.csv', limit=10)
     pprint.pprint(people)
 
     results = []

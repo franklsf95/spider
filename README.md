@@ -1,8 +1,11 @@
 # LinkedIn Extraction Project
 
-- Crawler
-- Parser
-- Analyzer
+1. Crawler
+   1. `googler`
+   2. `downloader`
+   3. `cleaner`
+2. Parser
+3. Analyzer
 
 ## Objective
 
