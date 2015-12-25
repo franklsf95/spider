@@ -19,15 +19,16 @@ logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
 
-def searchGoogle(keyword, site, start=0):
+def search_google(keyword, site, start=0):
     """
     Run a google search with given parameters and return the JSON result
-
-    :param query: string
-    :param domain: the domain name for the URL we are searching in
-    :rtype: a Python object returned by JSON parser
+    :param keyword: string
+    :param site: the domain name for the URL we are searching in
+    :param start: offset for search result
+    :return: a Python object returned by JSON parser
     """
-    log.info('Searching Google with keyword={0}, site={1}, start={2}'.format(keyword, site, start))
+    log.info('Searching Google with keyword={}, site={}, start={}'.format(
+            keyword, site, start))
     url = 'https://www.googleapis.com/customsearch/v1'
     params = {'key': GOOGLE_API_KEY,
               'cx': GOOGLE_CSE_ID,
@@ -39,11 +40,11 @@ def searchGoogle(keyword, site, start=0):
     return data
 
 
-def findLinkedInURL(name, items):
+def find_linkedin_url(name, items):
     """
     :param name: the name of the person
     :param items: a list of search result items
-    :rtype: (str, str) or None
+    :return: (str, str) or None
     """
     site = 'linkedin.com'
     candidates = []
@@ -52,23 +53,24 @@ def findLinkedInURL(name, items):
 
     for item in items:
         if not item['kind'] == 'customsearch#result':
-            log.warn('Google returned result of different kind: {0}'.format(item['kind']))
+            log.warn('Google returned result of different kind: {}'.format(
+                    item['kind']))
             continue
-        link = item['link']
+        url = item['link']
         title = item['title'].lower()
-        if not re.search(site, link):
-            log.debug('Not from LinkedIn: {0}'.format(link))
+        if not re.search(site, url):
+            log.debug('Not from LinkedIn: {0}'.format(url))
             continue
-        # Whitelist - confidence level 10
-        if re.search('/in/', link) \
-                or (re.search('/pub/', link) and not re.search('/pub/dir/', link)):
+        # White list - confidence level 10
+        if re.search('/in/', url) or \
+                (re.search('/pub/', url) and not re.search('/pub/dir/', url)):
             log.debug('Profile detected - confidence 10')
             c = (10, item)
             candidates.append(c)
             continue
-        # Blacklist
-        if re.search('/pub/dir/', link) or re.search('/title/', link):
-            log.debug('Not personal profile: {0}'.format(link))
+        # Black list
+        if re.search('/pub/dir/', url) or re.search('/title/', url):
+            log.debug('Not personal profile: {0}'.format(url))
             continue
         if re.search('top', title) or re.search('profiles', title):
             log.debug('Not personal profile: {0}'.format(title))
@@ -80,11 +82,12 @@ def findLinkedInURL(name, items):
         continue
 
     # Step 2: Match names
+
     names = name.split(' ')
     for part in names:
         # First name or last name
-        for i, cand in enumerate(candidates):
-            conf, item = cand
+        for i, pair in enumerate(candidates):
+            conf, item = pair
             if re.search(part, item['title']):
                 # Add confidence if we find part of the name
                 conf += 20
@@ -92,7 +95,7 @@ def findLinkedInURL(name, items):
 
     # Step 3: Choose the best result
 
-    best = max(candidates, key=lambda c: c[0])
+    best = max(candidates, key=lambda x: x[0])
     if best is None:
         return None
     else:
@@ -100,10 +103,9 @@ def findLinkedInURL(name, items):
         return conf, item['title'], item['link']
 
 
-def getLinkedInURL(triplet):
+def get_linkedin_url(triplet):
     """
     Search Google to get the LinkedIn URL of the given person
-
     :param triplet: a tuple of strings: (name, location, title)
     :return: (str, str) or None
     """
@@ -114,25 +116,25 @@ def getLinkedInURL(triplet):
     keyword = ' '.join(triplet)
     name = triplet[0]
     while offset < search_limit:
-        json = searchGoogle(keyword, site, start=offset)
+        result = search_google(keyword, site, start=offset)
         try:
-            items = json['items']
+            items = result['items']
         except (TypeError, KeyError):
-            log.error('Bad response from Google: {0}'.format(json))
+            log.error('Bad response from Google: {0}'.format(result))
             return None
         offset += len(items)
-        result = findLinkedInURL(name, items)
-        if not result is None:
+        result = find_linkedin_url(name, items)
+        if result is not None:
             return result
     return None
 
 
-def readPeople(file_path, limit):
+def read_people(file_path, limit):
     """
     Read the names and education of people from the given CSV file.
     :param file_path: string
     :param limit: int
-    :rtype: a list of strings as search keywords.
+    :return: a list of strings as search keywords.
     """
     ret = []
     with open(file_path) as file:
@@ -151,15 +153,13 @@ def readPeople(file_path, limit):
 def main():
     """
     Driver method.
-
-    :rtype: NoneType
     """
-    people = readPeople('data/people.csv', limit=10)
+    people = read_people('data/people.csv', limit=10)
     pprint.pprint(people)
 
     results = []
     for p in people:
-        result = getLinkedInURL(p)
+        result = get_linkedin_url(p)
         results.append(result)
     pprint.pprint(results)
 
