@@ -8,6 +8,9 @@ import requests
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
+USER_AGENT = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/'
+              '537.36 (KHTML, like Gecko) Chrome/49.0.2593.0 Safari/537.36'
+              )
 
 def download(url, file_path, overwrite=False):
     """
@@ -21,9 +24,12 @@ def download(url, file_path, overwrite=False):
         if os.path.isfile(file_path):
             log.error("File exists: {}. Abort.".format(file_path))
             return
-    resp = requests.get(url)
-    with open(file_path, 'w+') as file:
-        file.write(resp.text)
+    # Fake browser visit
+    headers = {'User-Agent': USER_AGENT}
+    resp = requests.get(url, headers=headers)
+    with open(file_path, 'wb+') as file:
+        for chunk in resp.iter_content():
+            file.write(chunk)
         log.info("Successfully saved {}.".format(url))
 
 
