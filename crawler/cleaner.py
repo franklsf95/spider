@@ -18,18 +18,14 @@ def clean_up(content):
     :return: a string
     """
     soup = BeautifulSoup(content, 'lxml')
-    main_soup = soup.find('main')
+    sub_soup = soup.find(id='profile')
     # Remove code and scripts
     for tag in ['code', 'script']:
-        for s in main_soup.find_all(tag):
+        for s in sub_soup.find_all(tag):
             s.decompose()
-    # Remove "member directory"
-    s = main_soup.find(id='directory')
-    if s is not None:
-        s.decompose()
 
     # Return result
-    result = main_soup.prettify()
+    result = sub_soup.prettify()
     return result
 
 

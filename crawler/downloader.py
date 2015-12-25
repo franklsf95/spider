@@ -59,7 +59,7 @@ def main():
     Driver method.
     """
     results = []
-    file_path = './results.py'
+    file_path = '../data/results.py'
     with open(file_path) as file:
         content = file.read()
         results = ast.literal_eval(content)
