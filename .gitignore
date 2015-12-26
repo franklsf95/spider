@@ -1,6 +1,6 @@
 .env
 .idea
-data
 input
+tmp
 venv-spider
 *__pycache*

@@ -42,7 +42,7 @@ def download_all(results):
     :param results: list of triplets
     :return: None
     """
-    root_path = '../data/profiles/'
+    root_path = '../tmp/profiles/'
     if not os.path.exists(root_path):
         os.makedirs(root_path)
 
@@ -58,7 +58,7 @@ def main():
     """
     Driver method.
     """
-    file_path = '../data/results.py'
+    file_path = '../tmp/results.py'
     with open(file_path) as file:
         content = file.read()
         people = ast.literal_eval(content)

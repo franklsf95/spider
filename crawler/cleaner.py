@@ -33,11 +33,11 @@ def main():
     """
     Driver method.
     """
-    root_path = '../data/clean_profiles/'
+    root_path = '../tmp/clean_profiles/'
     if not os.path.exists(root_path):
         os.makedirs(root_path)
 
-    files = glob('../data/profiles/*.html')
+    files = glob('../tmp/profiles/*.html')
     for file_path in files:
         with open(file_path, 'r') as file:
             content = file.read()
