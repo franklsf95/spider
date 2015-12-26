@@ -14,7 +14,7 @@ def prepare_db_session():
     Prepares the database.
     :return: SQLAlchemy session
     """
-    engine = create_engine("sqlite:///{}".format(DATABASE_PATH), echo=True)
+    engine = create_engine("sqlite:///{}".format(DATABASE_PATH))
     Base.metadata.bind = engine
     Base.metadata.create_all()
     Session.configure(bind=engine)

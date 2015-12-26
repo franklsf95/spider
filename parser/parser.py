@@ -8,10 +8,11 @@ from db.models import *
 import json
 import logging
 import os
+from urllib.parse import urlparse
 
 # Set up logging
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 
@@ -35,8 +36,6 @@ def extract_person_overview(session, s):
     locality_tag = dm.find(class_='locality')
     person.locality = locality_tag.text.strip()
     # Done.
-    print(person)
-    print('------------')
     session.add(person)
     return person
 
@@ -57,15 +56,18 @@ def extract_person_experiences(session, person, s):
         position.person = person
         # Get title
         title = extract_position_title(session, li)
+        # session.flush()
         position.title = title
         # Get company
-
+        company = extract_position_company(session, li)
+        position.company = company
         # Get date range
         start, end = extract_position_date_range(session, li)
         position.start_date = start
         position.end_date = end
         # Done.
         session.add(position)
+        session.flush()
 
 
 def extract_position_title(session, li):
@@ -75,23 +77,37 @@ def extract_position_title(session, li):
     :param li: parsed BeautifulSoup object
     :return: a Title object
     """
-    h4 = li.find('h4', class_='item-title')
-    a = h4.find('a')
-    name = a.text.strip()
-    url = a['href']
-    # Trim URL
-    domain = 'linkedin.com'
-    i = url.find(domain)
-    if i != -1:
-        end = i + len(domain)
-        url = url[end:]
-    i = url.find('?')
-    if i != -1:
-        url = url[:i]
+    return extract_position_subitem(session, li, Title, 'item-title')
 
-    # Find or create title
-    title = Title.get_or_create(session, name=name, url=url)
-    return title
+
+def extract_position_company(session, li):
+    return extract_position_subitem(session, li, Company, 'item-subtitle')
+
+
+def extract_position_subitem(session, li, model, class_):
+    """
+    Find or create a <model> instance from given HTML element.
+    :param session: an active SQLAlchemy session
+    :param li: HTML element
+    :param model: Class of model (Title, Company)
+    :param class_: CSS class
+    :return: a <model> object
+    """
+    h = li.find(class_=class_)
+    if h is None:
+        return None
+    a = h.find('a')
+    if a is None:
+        name = h.text.strip()
+        url = None
+    else:
+        name = a.text.strip()
+        url = a['href']
+        url = urlparse(url).path
+
+    # Find or create <instance>
+    instance = model.get_or_create(session, name=name, url=url)
+    return instance
 
 
 def extract_position_date_range(session, li):
@@ -141,19 +157,16 @@ def parse(session, title, url):
     # Add metadata to the person
     meta = {'url': url, 'file_name': file_name}
     person.meta = json.dumps(meta, separators=(',', ':'))
+    session.flush()
 
     # 2. Get experiences list
 
     extract_person_experiences(session, person, soup)
+    session.flush()
 
     # X. Commit changes
 
     session.commit()
-
-    print('-----------query')
-    print(session.query(Person).count())
-
-    raise ValueError
 
 
 def parse_all(session, results):
