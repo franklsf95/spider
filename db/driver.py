@@ -2,10 +2,9 @@
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from db.base import Base
-from db.models import Person, Position
+from db.models import *
 
-DATABASE_PATH = '../data/db.sqlite3'
+DATABASE_PATH = '../tmp/db.sqlite3'
 
 Session = sessionmaker()
 
@@ -21,3 +20,7 @@ def prepare_db_session():
     Session.configure(bind=engine)
     session = Session()
     return session
+
+
+if __name__ == '__main__':
+    prepare_db_session()

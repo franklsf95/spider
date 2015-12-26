@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
+from sqlalchemy import Column, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import object_mapper
+from sqlalchemy.sql.expression import ClauseElement
 
 
 class RepresentableBase(object):
@@ -14,6 +16,8 @@ class RepresentableBase(object):
     with the corresponding values.
     """
 
+    id = Column(Integer, primary_key=True)
+
     def __repr__(self):
         mapper = object_mapper(self)
         items = [(p.key, getattr(self, p.key))
@@ -22,6 +26,16 @@ class RepresentableBase(object):
         return "{0}({1})".format(
             self.__class__.__name__,
             ', '.join(['{0}={1!r}'.format(*_) for _ in items]))
+
+    @classmethod
+    def get_or_create(cls, session, **kwargs):
+        instance = session.query(cls).filter_by(**kwargs).first()
+        if instance:
+            return instance
+        else:
+            instance = cls(**kwargs)
+            session.add(instance)
+            return instance
 
 
 Base = declarative_base(cls=RepresentableBase)
