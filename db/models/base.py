@@ -3,7 +3,6 @@
 from sqlalchemy import Column, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import object_mapper
-from sqlalchemy.sql.expression import ClauseElement
 
 
 class RepresentableBase(object):

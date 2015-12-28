@@ -16,4 +16,4 @@ class Person(Base):
 
     positions = relationship('Position', back_populates='person')
     # certifications = relationship('Certification', back_populates='person')
-    # educations = relationship('Education', back_populates='person')
+    educations = relationship('Education', back_populates='person')
