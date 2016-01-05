@@ -12,4 +12,4 @@ class Company(Base):
     name = Column(String)
     url = Column(String, index=True)
 
-    positions = relationship('Position', back_populates='company')
+    experiences = relationship('PersonExperience', back_populates='company')

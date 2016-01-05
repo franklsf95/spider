@@ -3,11 +3,11 @@ from sqlalchemy.orm import relationship
 from db.models.base import Base
 
 
-class Position(Base):
+class PersonExperience(Base):
     """
     Representing a position in a person's profile
     """
-    __tablename__ = 'positions'
+    __tablename__ = 'person_experiences'
 
     person_id = Column(Integer, ForeignKey('people.id'), nullable=False)
     title_id = Column(Integer, ForeignKey('titles.id'))
@@ -16,6 +16,6 @@ class Position(Base):
     end_date = Column(Date)
     description = Column(String)
 
-    person = relationship('Person', back_populates='positions')
-    title = relationship('Title', back_populates='positions')
-    company = relationship('Company', back_populates='positions')
+    person = relationship('Person', back_populates='experiences')
+    title = relationship('Title', back_populates='experiences')
+    company = relationship('Company', back_populates='experiences')

@@ -53,25 +53,27 @@ class LinkedInParser(object):
         :return: None
         """
         sec = self.soup.find(id='experience')
+        if sec is None:
+            return
         items = sec.find_all('li', class_='position')
         for li in items:
             # Create a position object
-            position = Position()
-            position.person = person
+            exp = PersonExperience()
+            exp.person = person
             # Get title
             title = self._extract_li_subitem(li, Title, 'item-title')
-            position.title = title
+            exp.title = title
             # Get company
             company = self._extract_li_subitem(li, Company, 'item-subtitle')
-            position.company = company
+            exp.company = company
             # Get date range
             start, end = self._extract_date_range(li)
-            position.start_date = start
-            position.end_date = end
+            exp.start_date = start
+            exp.end_date = end
             # Get description
-            position.description = self._extract_description(li)
+            exp.description = self._extract_description(li)
             # Done.
-            self.session.add(position)
+            self.session.add(exp)
             self.session.flush()
 
     def extract_person_educations(self, person):
@@ -81,14 +83,21 @@ class LinkedInParser(object):
         :return: None
         """
         sec = self.soup.find(id='education')
+        if sec is None:
+            return
         items = sec.find_all('li', class_='school')
         for li in items:
             # Create an education object
-            education = Education()
-            education.person = person
+            edu = PersonEducation()
+            edu.person = person
             # Get school
-            # school = self._extract_li_subitem(li, School, 'item-title')
-            # position.school = school
+            school = self._extract_li_subitem(li, School, 'item-title')
+            edu.school = school
+            # Get date range
+            # Get description
+            # Done.
+            self.session.add(edu)
+            self.session.flush()
 
     def _extract_li_subitem(self, li, model, class_):
         """

@@ -3,13 +3,13 @@ from sqlalchemy.orm import relationship
 from db.models.base import Base
 
 
-class Title(Base):
+class School(Base):
     """
-    Representing a title of a job on LinkedIn
+    Representing a school on LinkedIn
     """
-    __tablename__ = 'titles'
+    __tablename__ = 'schools'
 
     name = Column(String)
     url = Column(String, index=True)
 
-    experiences = relationship('PersonExperience', back_populates='title')
+    educations = relationship('PersonEducation', back_populates='school')

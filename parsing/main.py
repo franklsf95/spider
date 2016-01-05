@@ -31,10 +31,7 @@ def parse(session, title, url):
 
     # 1. Get person's basic information
 
-    try:
-        person = p.extract_person_overview()
-    except TypeError:
-        log.error('TypeError')
+    person = p.extract_person_overview()
 
     # Add metadata to the person
     meta = {'url': url, 'file_name': file_name}
@@ -48,7 +45,8 @@ def parse(session, title, url):
 
     # 3. Get educations list
 
-    # extract_person_educations(session, )
+    p.extract_person_educations(person)
+    session.flush()
 
     # X. Commit changes
 

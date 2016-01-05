@@ -14,6 +14,6 @@ class Person(Base):
     locality = Column(String)
     meta = Column(String)
 
-    positions = relationship('Position', back_populates='person')
+    experiences = relationship('PersonExperience', back_populates='person')
     # certifications = relationship('Certification', back_populates='person')
-    educations = relationship('Education', back_populates='person')
+    educations = relationship('PersonEducation', back_populates='person')
