@@ -23,6 +23,7 @@ def parse(session, title, url):
     """
     root_path = '../tmp/clean_profiles/'
     file_name = "{}.html".format(title)
+    # file_name = title
     file_path = os.path.join(root_path, file_name)
     with open(file_path) as file:
         content = file.read()
@@ -39,14 +40,13 @@ def parse(session, title, url):
     session.flush()
 
     # 2. Get experiences list
-
     p.extract_person_experiences(person)
-    session.flush()
 
     # 3. Get educations list
-
     p.extract_person_educations(person)
-    session.flush()
+
+    # 4. Get certifications list
+    p.extract_person_certifications(person)
 
     # X. Commit changes
 

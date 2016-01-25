@@ -93,13 +93,52 @@ class LinkedInParser(object):
             # Get school
             school = self._extract_li_subitem(li, School, 'item-title')
             edu.school = school
+            # Get degree
+            degree_tag = li.find(class_='item-subtitle')
+            if degree_tag is not None:
+                edu.degree = degree_tag.text.strip()
             # Get date range
+            start, end = self._extract_date_range(li)
+            edu.start_date = start
+            edu.end_date = end
             # Get description
+            edu.description = self._extract_description(li)
             # Done.
             self.session.add(edu)
             self.session.flush()
 
+    def extract_person_certifications(self, person):
+        """
+        Extracts a person's certifications information from HTML.
+        :param person: a Person object
+        :return: None
+        """
+        sec = self.soup.find(id='certifications')
+        if sec is None:
+            return
+        items = sec.find_all('li', class_='certification')
+        for li in items:
+            # Create a person-certification object
+            pc = PersonCertification()
+            pc.person = person
+            # Get certification
+            cert = self._extract_li_subitem(li, Certification, 'item-title')
+            pc.certification = cert
+            # Get company
+            company = self._extract_li_subitem(li, Company, 'item-subtitle')
+            pc.company = company
+            # Get date range
+            start, end = self._extract_date_range(li)
+            pc.start_date = start
+            pc.end_date = end
+            # Get description
+            pc.description = self._extract_description(li)
+            # Done.
+            self.session.add(pc)
+            self.session.flush()
+
     def _extract_li_subitem(self, li, model, class_):
+        # TODO: Account for class_='external-link'
         """
         Find or create a <model> instance from given HTML element.
         :param li: HTML element
@@ -131,7 +170,11 @@ class LinkedInParser(object):
         :return: (date, date), date can be None
         """
         s = li.find(class_='date-range')
+        if s is None:
+            return None, None
         times = s.find_all('time')
+        if times is None:
+            return None, None
 
         def parse_date(i):
             if len(times) <= i:
