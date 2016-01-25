@@ -48,6 +48,9 @@ def parse(session, title, url):
     # 4. Get certifications list
     p.extract_person_certifications(person)
 
+    # 5. Get skills list
+    p.extract_person_skills(person)
+
     # X. Commit changes
 
     session.commit()

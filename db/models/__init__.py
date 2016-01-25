@@ -5,5 +5,7 @@ from .person import Person
 from .person_certification import PersonCertification
 from .person_education import PersonEducation
 from .person_experience import PersonExperience
+from .person_skill import PersonSkill
 from .school import School
+from .skill import Skill
 from .title import Title

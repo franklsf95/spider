@@ -137,16 +137,40 @@ class LinkedInParser(object):
             self.session.add(pc)
             self.session.flush()
 
+    def extract_person_skills(self, person):
+        """
+        Extracts a person's skills information from HTML.
+        :param person: a Person object
+        :return: None
+        """
+        sec = self.soup.find(id='skills')
+        if sec is None:
+            return
+        items = sec.find_all('li', class_='skill')
+        for li in items:
+            # Create a person-skill object
+            ps = PersonSkill()
+            ps.person = person
+            # Get skill
+            skill = self._extract_li_subitem(li, Skill, None)
+            ps.skill = skill
+            # Done.
+            self.session.add(ps)
+            self.session.flush()
+
     def _extract_li_subitem(self, li, model, class_):
         # TODO: Account for class_='external-link'
         """
         Find or create a <model> instance from given HTML element.
         :param li: HTML element
         :param model: Class of model (Title, Company)
-        :param class_: CSS class
+        :param class_: CSS class, or None for the li element itself.
         :return: a <model> object
         """
-        h = li.find(class_=class_)
+        if class_ is None:
+            h = li
+        else:
+            h = li.find(class_=class_)
         if h is None:
             return None
         a = h.find('a')

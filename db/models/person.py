@@ -15,5 +15,6 @@ class Person(Base):
     meta = Column(String)
 
     experiences = relationship('PersonExperience', back_populates='person')
-    certifications = relationship('PersonCertification', back_populates='person')
     educations = relationship('PersonEducation', back_populates='person')
+    certifications = relationship('PersonCertification', back_populates='person')
+    skills = relationship('PersonSkill', back_populates='person')
