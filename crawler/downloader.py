@@ -7,12 +7,25 @@ import requests
 
 # Set up logging
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 USER_AGENT = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/'
               '537.36 (KHTML, like Gecko) Chrome/49.0.2593.0 Safari/537.36'
               )
+
+
+def make_filename(title):
+    """
+    Translate title into a valid filename
+    :param title: str
+    :return: str
+    """
+    MAX_LEN = 60
+    cleaned = str.replace(title, '/', '-')
+    truncated = cleaned[:MAX_LEN]
+    with_ext = "{}.html".format(truncated)
+    return with_ext
 
 
 def download(url, file_path, overwrite=False):
@@ -36,21 +49,22 @@ def download(url, file_path, overwrite=False):
         log.info("Successfully saved {}.".format(url))
 
 
-def download_all(results):
+def download_all(results, offset=0):
     """
     Download all results to local files
     :param results: list of triplets
+    :param offset: int
     :return: None
     """
-    root_path = '../tmp/profiles/'
+    root_path = '../tmp/companies/'
     if not os.path.exists(root_path):
         os.makedirs(root_path)
 
-    for triplet in results:
+    for triplet in results[offset:]:
         if triplet is None:
             continue
         conf, title, url = triplet
-        file_path = os.path.join(root_path, "{}.html".format(title))
+        file_path = os.path.join(root_path, make_filename(title))
         download(url, file_path)
 
 
@@ -58,7 +72,7 @@ def main():
     """
     Driver method.
     """
-    file_path = '../tmp/results.py'
+    file_path = '../tmp/company_links.py'
     with open(file_path) as file:
         content = file.read()
         people = ast.literal_eval(content)
