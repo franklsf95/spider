@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String
+from sqlalchemy import Column
 from sqlalchemy.orm import relationship
 from db.models.base import Base
 
@@ -9,7 +9,7 @@ class Certification(Base):
     """
     __tablename__ = 'certifications'
 
-    name = Column(String)
-    url = Column(String, index=True)
+    name = Column(Base.String)
+    url = Column(Base.ShortString, index=True)
 
     certifications = relationship('PersonCertification', back_populates='certification')

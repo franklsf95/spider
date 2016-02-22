@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, ForeignKey
+from sqlalchemy import Column, Integer, Date, Text, ForeignKey
 from sqlalchemy.orm import relationship
 from db.models.base import Base
 
@@ -14,7 +14,7 @@ class PersonExperience(Base):
     company_id = Column(Integer, ForeignKey('companies.id'))
     start_date = Column(Date)
     end_date = Column(Date)
-    description = Column(String)
+    description = Column(Text)
 
     person = relationship('Person', back_populates='experiences')
     title = relationship('Title', back_populates='experiences')

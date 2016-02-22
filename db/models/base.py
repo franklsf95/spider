@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import object_mapper
 
@@ -35,6 +35,10 @@ class RepresentableBase(object):
             instance = cls(**kwargs)
             session.add(instance)
             return instance
+
+    # Pre-defined VARCHAR fields
+    ShortString = String(255)
+    String = String(2048)
 
 
 Base = declarative_base(cls=RepresentableBase)

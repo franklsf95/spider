@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String
+from sqlalchemy import Column
 from sqlalchemy.orm import relationship
 from db.models.base import Base
 
@@ -9,7 +9,7 @@ class Company(Base):
     """
     __tablename__ = 'companies'
 
-    name = Column(String)
-    url = Column(String, index=True)
+    name = Column(Base.String)
+    url = Column(Base.ShortString, index=True)
 
     experiences = relationship('PersonExperience', back_populates='company')
