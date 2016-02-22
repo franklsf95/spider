@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# Cleans stuff from saved HTML pages
 
 from bs4 import BeautifulSoup
 from glob import glob

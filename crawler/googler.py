@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# Search Google for LinkedIn URL of personal profile pages
 
 import csv
 import json

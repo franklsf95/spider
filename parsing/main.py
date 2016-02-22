@@ -66,6 +66,7 @@ def parse_all(session, results):
         if triplet is None:
             continue
         _, title, url = triplet
+        print('Parsing:', title)
         parse(session, title, url)
 
 
@@ -73,7 +74,7 @@ def main():
     """
     Driver method.
     """
-    file_path = '../tmp/results.py'
+    file_path = '../tmp/html_urls.py'
     with open(file_path) as file:
         content = file.read()
         people = ast.literal_eval(content)

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# Extracts Company ID from saved LinkedIn company pages
 
 import ast
 import csv

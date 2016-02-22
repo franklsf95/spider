@@ -34,14 +34,18 @@ class LinkedInParser(object):
         sec = self.soup.find(id='topcard')
         # Get the name
         name_tag = sec.find(id='name')
-        person.name = name_tag.text.strip()
+        if name_tag is not None:
+            person.name = name_tag.text.strip()
         # Get the headline
         headline_tag = sec.find(class_='headline')
-        person.headline = headline_tag.text.strip()
+        if headline_tag is not None:
+            person.headline = headline_tag.text.strip()
         # Get the locality
         dm = sec.find(id='demographics')
-        locality_tag = dm.find(class_='locality')
-        person.locality = locality_tag.text.strip()
+        if dm is not None:
+            locality_tag = dm.find(class_='locality')
+            if locality_tag is not None:
+                person.locality = locality_tag.text.strip()
         # Done.
         self.session.add(person)
         return person
@@ -204,7 +208,12 @@ class LinkedInParser(object):
             if len(times) <= i:
                 return None
             t = times[i].text.strip()
-            return dateutil.parser.parse(t)
+            try:
+                result = dateutil.parser.parse(t)
+            except ValueError as e:
+                result = None
+                log.error('[Date range] {}'.format(e))
+            return result
 
         start = parse_date(0)
         end = parse_date(1)

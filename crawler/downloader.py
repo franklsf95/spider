@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# Downloads HTML pages from LinkedIn
 
 import ast
 import logging
@@ -56,7 +57,7 @@ def download_all(results, offset=0):
     :param offset: int
     :return: None
     """
-    root_path = '../tmp/companies/'
+    root_path = '../tmp/profiles/'
     if not os.path.exists(root_path):
         os.makedirs(root_path)
 
@@ -72,7 +73,7 @@ def main():
     """
     Driver method.
     """
-    file_path = '../tmp/company_links.py'
+    file_path = '../tmp/html_urls.py'
     with open(file_path) as file:
         content = file.read()
         people = ast.literal_eval(content)
